@@ -54,8 +54,15 @@ def add_expense(date_time, category, amount, description, payment_method):
     conn.commit()
     conn.close()
 
-# Fetch last 2 expenses
-def get_expenses():
+# Fetch all expenses (for budget calculation)
+def get_all_expenses():
+    conn = get_db_connection()
+    df = pd.read_sql("SELECT * FROM expenses ORDER BY date_time DESC", conn)
+    conn.close()
+    return df
+
+# Fetch last 2 expenses (for display only)
+def get_last_2_expenses():
     conn = get_db_connection()
     df = pd.read_sql("SELECT * FROM expenses ORDER BY date_time DESC LIMIT 2", conn)
     conn.close()
@@ -75,8 +82,10 @@ monthly_budget = get_budget()
 
 st.markdown(f"<h4 style='text-align: center;'>📅 {current_day}, {current_date} &nbsp;&nbsp;&nbsp; Budget: ₹{monthly_budget}</h4>", unsafe_allow_html=True)
 
-# Calculate spending
-expenses = get_expenses()
+# Get all expenses (for budget calculation)
+expenses = get_all_expenses()
+
+# Calculate total spending and remaining budget from all transactions
 total_spent = round(expenses["amount"].sum(), 2) if not expenses.empty else 0.00
 remaining_budget = round(monthly_budget - total_spent, 2)
 
@@ -89,8 +98,17 @@ else:
 
 # Add new expense
 st.subheader("➕ Add an Expense")
+# Check if the time is already in session_state, otherwise set default to current time
+if 'time_selected' not in st.session_state:
+    st.session_state['time_selected'] = datetime.datetime.now().time()
+
+# Time input (allow past time or manual entry)
+time = st.time_input("Time:", value=st.session_state['time_selected'])
+
+# Store the selected time in session_state so it doesn't reset
+st.session_state['time_selected'] = time
+
 date_time = st.date_input("Date:", current_date)
-time = st.time_input("Time:", datetime.datetime.now().time())
 category = st.selectbox("Category:", ["Rent & PG", "Food & Groceries", "Transport", "Utilities & Bills", "Shopping", "Entertainment", "Health & Medical", "Education & Learning", "Miscellaneous", "Savings & Investments"])
 amount = st.number_input("Amount:", min_value=0.01, format="%.2f")
 description = st.text_area("Description:")
@@ -102,10 +120,13 @@ if st.button("Add Expense"):
     st.success(f"Expense of ₹{amount} added successfully!")
     st.rerun()
 
+# Fetch last 2 expenses (for display only)
+last_2_expenses = get_last_2_expenses()
+
 # Display last 2 expenses
 st.subheader("📜 Expense History (Last 2 Transactions)")
-if not expenses.empty:
-    for index, row in expenses.iterrows():
+if not last_2_expenses.empty:
+    for index, row in last_2_expenses.iterrows():
         col1, col2, col3 = st.columns([3, 3, 3])
         col1.write(row['date_time'])
         col2.write(row['category'])
