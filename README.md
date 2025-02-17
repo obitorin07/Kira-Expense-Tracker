@@ -28,4 +28,3 @@ Kira Expense Tracker is a personal finance tracking app designed to help you log
 
 ![Image](https://github.com/user-attachments/assets/e56c4c99-b8b4-4d6f-a05f-09244ec27620)
 **Thank you :)**
->>>>>>> b7da61b5c939f007a3f29d8d81da7e1a06fb6c75
