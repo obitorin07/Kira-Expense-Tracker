@@ -41,7 +41,7 @@ def get_budget():
     cursor.execute("SELECT total_budget FROM budget WHERE month_year = %s", (current_month,))
     budget = cursor.fetchone()
     conn.close()
-    return budget[0] if budget else 20000
+    return budget[0] if budget else 10000
 
 # Add expense to the database
 def add_expense(date_time, category, amount, description, payment_method):

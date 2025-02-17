@@ -20,7 +20,10 @@ CREATE TABLE IF NOT EXISTS budget (
 
 USE expense_tracker;
 
-SELECT * FROM BUDGET;
+SELECT * FROM BUDGET; -- at 
 SELECT * FROM EXPENSES;
 
 -- truncate table expenses;
+
+
+SELECT * FROM EXPENSES;
