@@ -22,6 +22,8 @@ BEGIN;
 USE expense_tracker;
 
 SELECT * FROM BUDGET; 
+-- ALTER TABLE BUDGET ADD COLUMN total_spent decimal(10,2);
+-- ALTER TABLE BUDGET DROP COLUMN TOTAL_SPENT;
 SELECT * FROM EXPENSES;
 
 -- update expenses set category ='Food & Groceries' where id = 9;

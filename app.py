@@ -18,14 +18,14 @@ def get_db_connection():
         password=cre['password']
     )
 
-# Reset budget on the 10th of every month
+# Reset budget on the given date every month
 def reset_budget():
     conn = get_db_connection()
     cursor = conn.cursor()
     current_month = datetime.date.today().strftime("%Y-%m")
     today_day = datetime.date.today().day
 
-    if today_day == 10:  # Reset budget only on the 10th
+    if today_day == 17:  # Reset budget only on the given date
         cursor.execute(
             "INSERT INTO budget (month_year, total_budget) VALUES (%s, %s) ON DUPLICATE KEY UPDATE total_budget = 10000",
             (current_month, 10000)
@@ -86,7 +86,7 @@ st.set_page_config(page_title="Expense Tracker", page_icon="kira_logo.png")
 st.image("lone_warrior.jpg", use_container_width=True)
 st.markdown("<h2 style='text-align: center; color: #4CAF50;'>Expense Tracker</h2>", unsafe_allow_html=True)
 
-reset_budget()  # Automatically reset budget every 10th of the month
+reset_budget()  # Automatically reset budget given date of the month
 
 # Display current date and budget in a single line
 current_date = datetime.date.today()
