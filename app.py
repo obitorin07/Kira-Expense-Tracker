@@ -4,6 +4,7 @@ import pandas as pd
 import datetime
 import os
 from dotenv import dotenv_values
+from decimal import Decimal
 
 # Load environment variables
 cre = dotenv_values(r"credentials.env")
@@ -41,7 +42,7 @@ def get_budget():
     cursor.execute("SELECT total_budget FROM budget WHERE month_year = %s", (current_month,))
     budget = cursor.fetchone()
     conn.close()
-    return budget[0] if budget else 10000
+    return Decimal(budget[0]) if budget else Decimal(10000)
 
 # Add expense to the database
 def add_expense(date_time, category, amount, description, payment_method):
@@ -61,6 +62,18 @@ def get_expenses():
     conn.close()
     return df
 
+# Function to update the budget
+def update_budget(new_budget):
+    conn = get_db_connection()
+    cursor = conn.cursor()
+    current_month = datetime.date.today().strftime("%Y-%m")
+    cursor.execute(
+        "INSERT INTO budget (month_year, total_budget) VALUES (%s, %s) ON DUPLICATE KEY UPDATE total_budget = %s",
+        (current_month, new_budget, new_budget)
+    )
+    conn.commit()
+    conn.close()
+
 # Main Streamlit UI
 st.set_page_config(page_title="Expense Tracker", page_icon="kira_logo.png")
 st.image("lone_warrior.jpg", use_container_width=True)
@@ -78,7 +91,7 @@ st.markdown(f"<h4 style='text-align: center;'>📅 {current_day}, {current_date}
 # Calculate spending
 expenses = get_expenses()
 total_spent = round(expenses["amount"].sum(), 2) if not expenses.empty else 0.00
-remaining_budget = round(monthly_budget - total_spent, 2)
+remaining_budget = round(float(monthly_budget) - total_spent, 2)  # Ensure both are float for subtraction
 
 # Display budget summary with proper alignment
 st.markdown("<h4 style='text-align: center;'>Budget Summary</h4>", unsafe_allow_html=True)
@@ -112,3 +125,18 @@ if not expenses.empty:
         col3.write(f"₹{row['amount']}")
 else:
     st.write("No expenses recorded yet!")
+
+# Update budget section
+st.subheader("💰 Update Budget")
+
+# Remove the currency symbol from the format string for st.number_input
+new_budget = st.number_input("Enter New Budget Amount:", min_value=0.01, format="%.2f")
+
+if st.button("Update Budget"):
+    if new_budget > 0:
+        # Update the budget in the database
+        update_budget(new_budget)
+        # Display the updated budget with currency symbol
+        st.success(f"Budget updated to ₹{new_budget}")
+    else:
+        st.error("Please enter a valid budget amount.")
