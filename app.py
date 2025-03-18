@@ -25,7 +25,7 @@ def reset_budget():
     current_month = datetime.date.today().strftime("%Y-%m")
     today_day = datetime.date.today().day
 
-    if today_day == 17:  # Reset budget only on the given date
+    if today_day == 16:  # Reset budget only on the given date
         cursor.execute(
             "INSERT INTO budget (month_year, total_budget) VALUES (%s, %s) ON DUPLICATE KEY UPDATE total_budget = 10000",
             (current_month, 10000)
@@ -103,14 +103,21 @@ else:
 # Add new expense
 st.subheader("➕ Add an Expense")
 date_time = st.date_input("Date:", current_date)
-time = st.time_input("Time:", datetime.datetime.now().time())
+
+# ✅ FIX: Default to current time but allow selecting past time without resetting
+if "selected_time" not in st.session_state:
+    st.session_state["selected_time"] = datetime.datetime.now().time()  # Default to current time
+
+selected_time = st.time_input("Time:", st.session_state["selected_time"])
+st.session_state["selected_time"] = selected_time  # Store selected time
+
 category = st.selectbox("Category:", ["Rent & PG", "Food & Groceries", "Transport", "Utilities & Bills", "Shopping", "Entertainment", "Health & Medical", "Education & Learning", "Miscellaneous", "Savings & Investments"])
 amount = st.number_input("Amount:", min_value=0.01, format="%.2f")
 description = st.text_area("Description:")
 payment_method = st.selectbox("Payment Method:", ["UPI", "Cash", "Others"])
 
 if st.button("Add Expense"):
-    full_datetime = datetime.datetime.combine(date_time, time)
+    full_datetime = datetime.datetime.combine(date_time, selected_time)
     add_expense(full_datetime, category, amount, description, payment_method)
     st.success(f"Expense of ₹{amount} added successfully!")
     st.rerun()
@@ -128,15 +135,11 @@ else:
 
 # Update budget section
 st.subheader("💰 Update Budget")
-
-# Remove the currency symbol from the format string for st.number_input
 new_budget = st.number_input("Enter New Budget Amount:", min_value=0.01, format="%.2f")
 
 if st.button("Update Budget"):
     if new_budget > 0:
-        # Update the budget in the database
         update_budget(new_budget)
-        # Display the updated budget with currency symbol
         st.success(f"Budget updated to ₹{new_budget}")
     else:
         st.error("Please enter a valid budget amount.")
