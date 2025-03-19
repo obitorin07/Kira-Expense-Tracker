@@ -25,6 +25,8 @@ SELECT * FROM BUDGET;
 -- ALTER TABLE BUDGET ADD COLUMN total_spent decimal(10,2);
 -- ALTER TABLE BUDGET DROP COLUMN TOTAL_SPENT;
 SELECT * FROM EXPENSES;
+-- DELETE FROM EXPENSES WHERE ID =13
+-- update budget set total_budget = 10000.00 where month_year = '2025-02';
 
 -- update expenses set category ='Food & Groceries' where id = 9;
 -- truncate table expenses;

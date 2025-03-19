@@ -1,0 +1,15 @@
+2025-03-18 14:27:14,833 - Script ran, but it's not the 16th. No reset performed.
+2025-03-18 14:41:05,871 - Script ran, but it's not the 16th. No reset performed.
+2025-03-19 13:41:55,845 - package: mysql.connector.plugins
+2025-03-19 13:41:55,846 - plugin_name: caching_sha2_password
+2025-03-19 13:41:55,846 - AUTHENTICATION_PLUGIN_CLASS: MySQLCachingSHA2PasswordAuthPlugin
+2025-03-19 13:41:55,897 - Script ran, but it's not the 16th. No reset performed.
+2025-03-19 13:42:05,545 - Script ran, but it's not the 16th. No reset performed.
+2025-03-19 13:42:07,808 - Script ran, but it's not the 16th. No reset performed.
+2025-03-19 13:42:23,612 - Script ran, but it's not the 16th. No reset performed.
+2025-03-19 13:42:35,477 - Script ran, but it's not the 16th. No reset performed.
+2025-03-19 13:42:36,400 - Script ran, but it's not the 16th. No reset performed.
+2025-03-19 13:42:44,785 - Script ran, but it's not the 16th. No reset performed.
+2025-03-19 13:43:13,187 - Script ran, but it's not the 16th. No reset performed.
+2025-03-19 13:43:18,745 - Script ran, but it's not the 16th. No reset performed.
+2025-03-19 13:43:24,629 - Script ran, but it's not the 16th. No reset performed.
