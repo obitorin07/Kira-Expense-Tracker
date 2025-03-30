@@ -16,27 +16,26 @@ def get_db_connection():
         database=cre['database'],
         user=cre['user'],
         password=cre['password'],
-        auth_plugin='mysql_native_password'  # Add this line
+        auth_plugin='mysql_native_password'
     )
 
-
-# Reset budget on the 16th of every month
+# Reset budget on the 1st of every month
 def reset_budget():
     conn = get_db_connection()
     cursor = conn.cursor()
     current_month = datetime.date.today().strftime("%Y-%m")
     today_day = datetime.date.today().day
 
-    if today_day == 16:  # Reset budget only on the 16th
+    if today_day == 1:  # Reset budget only on the 1st
         cursor.execute(
-            "INSERT INTO budget (month_year, total_budget) VALUES (%s, %s) ON DUPLICATE KEY UPDATE total_budget = 10000",
-            (current_month, 10000)
+            "INSERT INTO budget (month_year, total_budget) VALUES (%s, %s) ON DUPLICATE KEY UPDATE total_budget = 12000",
+            (current_month, 12000)
         )
         conn.commit()
     
     conn.close()
 
-# Get budget (for current 16th to 15th cycle)
+# Get budget (for current month)
 def get_budget():
     conn = get_db_connection()
     cursor = conn.cursor()
@@ -46,20 +45,16 @@ def get_budget():
     budget = cursor.fetchone()
     
     conn.close()
-    return Decimal(budget[0]) if budget else Decimal(10000)
+    return Decimal(budget[0]) if budget else Decimal(12000)
 
-# Get total spent from 16th of the month to 15th of next month
+# Get total spent from 1st to the current date
 def get_total_spent():
     conn = get_db_connection()
     cursor = conn.cursor()
     
     today = datetime.date.today()
-    if today.day >= 16:  
-        start_date = today.replace(day=16)  
-        end_date = (today.replace(day=1) + datetime.timedelta(days=32)).replace(day=15)  
-    else:
-        start_date = (today.replace(day=1) - datetime.timedelta(days=1)).replace(day=16)  
-        end_date = today.replace(day=15)  
+    start_date = today.replace(day=1)  # Start of the month
+    end_date = today  # Today
 
     cursor.execute("SELECT SUM(amount) FROM expenses WHERE date_time BETWEEN %s AND %s", (start_date, end_date))
     total_spent = cursor.fetchone()[0] or 0  
@@ -102,7 +97,7 @@ st.set_page_config(page_title="Expense Tracker", page_icon="kira_logo.png")
 st.image("lone_warrior.jpg", use_container_width=True)
 st.markdown("<h2 style='text-align: center; color: #4CAF50;'>Expense Tracker</h2>", unsafe_allow_html=True)
 
-reset_budget()  # Automatically reset budget on the 16th
+reset_budget()  # Automatically reset budget on the 1st
 
 # Display current date and budget
 current_date = datetime.date.today()
