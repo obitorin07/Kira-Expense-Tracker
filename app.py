@@ -15,8 +15,10 @@ def get_db_connection():
         host=cre['host'],
         database=cre['database'],
         user=cre['user'],
-        password=cre['password']
+        password=cre['password'],
+        auth_plugin='mysql_native_password'  # Add this line
     )
+
 
 # Reset budget on the 16th of every month
 def reset_budget():
